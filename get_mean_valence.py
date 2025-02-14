@@ -22,7 +22,6 @@
 
 #######################
 # YOUR CODE GOES HERE #
-from pathlib import Path
 import csv
 def get_mean_valence(path):
     with open(path) as f:
