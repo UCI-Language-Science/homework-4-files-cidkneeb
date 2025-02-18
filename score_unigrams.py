@@ -32,10 +32,84 @@
 # You will need to use log and -inf here. 
 # You can add any additional import statements you need here.
 from math import log, inf
+from pathlib import Path
+import csv
 
 
 #######################
 # YOUR CODE GOES HERE #
+
+def score_unigrams(training_dir, test, output):
+    
+    # my_path = Path('dirA')
+    # for txt_file in my_path.glob('*.txt'):
+    # with open(txt_file) as file:
+    # # Do something with each file...
+    counts = {}
+    total_words = 0
+
+    for txt_file in Path(training_dir).glob('*.txt'):
+        with open(txt_file) as f:
+            words = f.read().split()
+            #print(txt)
+
+            #str_lst = [x.lower() for x in words]
+            
+            for word in words:
+                word = word.lower()
+                counts[word] = counts.get(word,0) + 1
+                total_words += 1
+            # for key in counts:
+            #     counts[key] = counts.get(key) / len(str_lst)
+    
+    probs = {}
+    for word in counts:
+        probs[word] = counts[word] / total_words
+    
+    results = []
+    with open(test) as test_file:
+        test_sentences = test_file.readlines()
+    for sentence in test_sentences:
+        sentence = sentence.strip()
+        words = sentence.split()
+        words = [word.lower() for word in words]
+
+        log_prob = 0
+        unknown_word_found = False
+        for word in words:
+            if word not in probs:
+                unknown_word_found = True
+                break
+            else:
+                word_prob = probs[word]
+                log_prob += log(word_prob)
+        result = {}
+        result['sentence'] = sentence
+        if unknown_word_found:
+            result['unigram_prob'] = str(-inf)
+        else:
+            result['unigram_prob'] = str(log_prob)
+        results.append(result)
+
+    with open(output, 'w', newline='') as output_file:
+        writer = csv.DictWriter(output_file, fieldnames=['sentence', 'unigram_prob'])
+        writer.writeheader()
+        writer.writerows(results)
+
+
+    # prob = 1
+    # sentence_lst = [x.lower() for x in sentence_lst]
+    # for word in sentence_lst:
+    #     prob *= unigram_dict[word]
+    # return prob
+    
+
+
+            
+            
+    
+
+    
 #######################
 
 
@@ -43,4 +117,4 @@ from math import log, inf
 # Do not modify the following line
 if __name__ == "__main__":
     # You can write code to test your function here
-    pass 
+    score_unigrams('training_data','test_data/test_sentences.txt','output')

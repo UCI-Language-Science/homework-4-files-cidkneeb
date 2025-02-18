@@ -22,9 +22,39 @@
 
 #######################
 # YOUR CODE GOES HERE #
+import csv
+def get_mean_valence(path):
+    with open(path) as f:
+        reader = csv.DictReader(f)
+        data = [row for row in reader]
+        # d = {}
+
+        # [...]
+
+        # if key in d:
+        #   d[key].append(value)
+        # else:
+        #   d[key] = [ value ]
+        mean_valences = {}
+        for dct in data:
+            modality = dct['Modality']
+            valence = float(dct['Val'])
+
+            if modality in mean_valences:
+                mean_valences[modality].append(valence)
+            else:
+                mean_valences[modality] = [valence]
+        
+        for key, valences in mean_valences.items():
+            mean_valences[key] = sum(valences)/len(valences)
+        return mean_valences
+
+
+
 #######################
+
 
 # Do not modify the following line
 if __name__ == "__main__":
     # You can write code to test your function here
-    pass 
+    print(get_mean_valence('valence_data/winter_2016_senses_valence.csv'))
